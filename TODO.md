@@ -1,12 +1,16 @@
 # Harmoni - TODO List
 
 ## Sound Assets
-- [ ] Add actual sound files to the public/sounds directory
-  - [ ] Nature sounds (rain, forest, ocean, thunder)
-  - [ ] Ambient sounds (café, fireplace)
-  - [ ] White noise variations (white, pink, brown)
-  - [ ] Meditation sounds (singing bowl, om chant)
-- [ ] Add SVG icons for each sound type
+- [x] Add placeholder sound files to the public/sounds directory
+  - [x] Nature sounds (rain, forest, ocean, thunder)
+  - [x] Ambient sounds (café, fireplace)
+  - [x] White noise variations (white, pink, brown)
+  - [x] Meditation sounds (singing bowl, om chant)
+- [x] Add SVG icons for each sound type
+- [ ] Replace placeholder sounds with actual royalty-free audio files
+  - [ ] Find appropriate, high-quality sound files
+  - [ ] Ensure all sounds have proper licensing
+  - [ ] Document sources in ASSETS.md
 
 ## Features
 - [ ] Implement save/load functionality for custom sound mixes
@@ -24,8 +28,9 @@
 - [ ] Add integration tests for audio functionality
 
 ## Documentation
+- [x] Create ASSETS.md to document sound and icon sources
 - [ ] Update README with complete setup instructions
-- [ ] Add contributing guidelines
+- [x] Add contributing guidelines
 
 ## Deployment
 - [ ] Set up custom domain (if applicable)
