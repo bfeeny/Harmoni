@@ -18,6 +18,11 @@
   - [x] Create custom hook (useMixes) for React components
   - [x] Add local storage for mixes
   - [x] Add UI for naming and saving mixes
+- [x] Integrate external sound sources
+  - [x] Add Freesound API integration
+  - [x] Create FreesoundService for API communication
+  - [x] Create FreesoundSearch component for searching and adding sounds
+  - [x] Implement useSoundLibrary hook for managing custom sounds
 - [ ] Add audio visualization
   - [ ] Add a Canvas component for visualization
   - [ ] Implement visualization effects based on active sounds
@@ -31,6 +36,7 @@
 ## Documentation
 - [x] Create ASSETS.md to document sound and icon sources
 - [ ] Update README with complete setup instructions
+  - [ ] Add Freesound API setup instructions
 - [x] Add contributing guidelines
 
 ## Deployment

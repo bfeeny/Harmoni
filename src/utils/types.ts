@@ -9,6 +9,16 @@ export enum SoundCategory {
 }
 
 /**
+ * Sound source information
+ */
+export interface SoundSource {
+  id: number | string;
+  url: string;
+  license: string;
+  username?: string;
+}
+
+/**
  * Sound data interface
  */
 export interface Sound {
@@ -18,6 +28,7 @@ export interface Sound {
   description: string;
   filepath: string;
   iconPath?: string;
+  source?: SoundSource;
 }
 
 /**

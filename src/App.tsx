@@ -1,18 +1,22 @@
 import { useState, useEffect } from 'react';
-import { soundLibrary } from './data/soundLibrary';
-import { SoundCategory, TimerSettings } from './utils/types';
+import { Sound, SoundCategory } from './utils/types';
 import { audioService } from './services/AudioService';
 import SoundGrid from './components/SoundGrid';
 import CategoryFilter from './components/CategoryFilter';
 import Timer from './components/Timer';
 import MixControls from './components/MixControls';
+import FreesoundSearch from './components/FreesoundSearch';
+import TabNavigation, { TabId } from './components/TabNavigation';
+import { useSoundLibrary } from './hooks/useSoundLibrary';
 import './styles/App.css';
 
 function App() {
+  const { soundLibrary, addSound } = useSoundLibrary();
   const [activeCategory, setActiveCategory] = useState<SoundCategory | null>(null);
   const [activeSounds, setActiveSounds] = useState<Set<string>>(new Set());
   const [soundVolumes, setSoundVolumes] = useState<Map<string, number>>(new Map());
   const [isAudioInitialized, setIsAudioInitialized] = useState(false);
+  const [activeTab, setActiveTab] = useState<TabId>(TabId.SoundLibrary);
 
   // Initialize audio context when the page is first interacted with
   useEffect(() => {
@@ -47,7 +51,7 @@ function App() {
       // Clean up audio resources
       audioService.dispose();
     };
-  }, [isAudioInitialized]);
+  }, [isAudioInitialized, soundLibrary]);
 
   // Handle play sound
   const handlePlaySound = (id: string) => {
@@ -111,6 +115,25 @@ function App() {
     console.log(`Timer update: ${timeRemaining} seconds remaining`);
   };
 
+  // Handle adding a new sound from Freesound
+  const handleAddSound = (sound: Sound) => {
+    const success = addSound(sound);
+    if (success) {
+      // Load the sound for immediate use
+      audioService.loadSound(sound.id, sound.filepath)
+        .then(() => {
+          console.log(`Sound ${sound.id} loaded successfully`);
+          // Switch to sound library tab to show the new sound
+          setActiveTab(TabId.SoundLibrary);
+          // Reset the category filter to show all sounds
+          setActiveCategory(null);
+        })
+        .catch(err => {
+          console.error(`Error loading sound ${sound.id}:`, err);
+        });
+    }
+  };
+
   return (
     <div className="app">
       <header className="app-header">
@@ -119,20 +142,33 @@ function App() {
       </header>
 
       <main className="app-main">
-        <CategoryFilter 
-          activeCategory={activeCategory}
-          onCategoryChange={setActiveCategory}
+        <TabNavigation 
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
         />
 
-        <SoundGrid 
-          sounds={soundLibrary}
-          category={activeCategory}
-          activeSounds={activeSounds}
-          soundVolumes={soundVolumes}
-          onPlay={handlePlaySound}
-          onStop={handleStopSound}
-          onVolumeChange={handleVolumeChange}
-        />
+        {activeTab === TabId.SoundLibrary && (
+          <>
+            <CategoryFilter 
+              activeCategory={activeCategory}
+              onCategoryChange={setActiveCategory}
+            />
+
+            <SoundGrid 
+              sounds={soundLibrary}
+              category={activeCategory}
+              activeSounds={activeSounds}
+              soundVolumes={soundVolumes}
+              onPlay={handlePlaySound}
+              onStop={handleStopSound}
+              onVolumeChange={handleVolumeChange}
+            />
+          </>
+        )}
+
+        {activeTab === TabId.FreesoundSearch && (
+          <FreesoundSearch onAddSound={handleAddSound} />
+        )}
 
         <div className="controls-section">
           <MixControls 

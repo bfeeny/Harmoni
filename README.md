@@ -11,6 +11,7 @@ A modern web app that generates personalized ambient soundscapes for focus, rela
 - Save and share custom sound mixes
 - Timer functionality for sleep/meditation
 - Beautiful, minimalist visualization of the sounds
+- Integration with Freesound API for endless sound possibilities
 - Optional focus timer/pomodoro integration
 
 ## Project Structure
@@ -24,6 +25,7 @@ harmoni/
 │   ├── assets/     # Images, fonts, etc.
 │   ├── components/ # React components
 │   ├── data/       # Data files
+│   ├── hooks/      # React custom hooks
 │   ├── services/   # Audio and other services
 │   ├── styles/     # CSS files
 │   └── utils/      # Utility functions and types
@@ -57,7 +59,13 @@ harmoni/
    npm install
    ```
 
-3. Start the development server
+3. (Optional) Set up Freesound API
+   - Create an account at [Freesound.org](https://freesound.org/)
+   - Create an API application in your Freesound account
+   - Copy your API key and client ID
+   - Edit the FreesoundService.ts file to replace the placeholder values with your actual API key and client ID
+
+4. Start the development server
    ```
    npm start
    ```
@@ -80,10 +88,25 @@ The app will be available at http://localhost:3000.
 Harmoni uses the Web Audio API to load, process, and mix various ambient sounds. Users can:
 
 1. Browse sounds by category (nature, ambient, white noise, meditation)
-2. Create personalized mixes with multiple sounds
-3. Adjust volume levels for each sound
-4. Set sleep timers for automatic fade-out
-5. Save and share their favorite mixes
+2. Search and import sounds from Freesound.org via the API
+3. Create personalized mixes with multiple sounds
+4. Adjust volume levels for each sound
+5. Set sleep timers for automatic fade-out
+6. Save and load custom mixes
+
+### Freesound Integration
+
+Harmoni integrates with the [Freesound API](https://freesound.org/docs/api/) to provide access to a vast library of Creative Commons licensed sounds. This significantly expands the available sounds beyond the built-in library.
+
+To use the Freesound integration:
+
+1. Click on the "Search Freesound" tab
+2. Enter search terms for ambient sounds
+3. Listen to previews of search results
+4. Add sounds you like to your Harmoni library
+5. Use the added sounds in your mixes
+
+Note: Freesound API functionality requires setting up API credentials as described in the Installation section.
 
 ## Contributing
 
