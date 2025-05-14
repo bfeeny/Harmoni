@@ -6,6 +6,7 @@ import CategoryFilter from './components/CategoryFilter';
 import Timer from './components/Timer';
 import MixControls from './components/MixControls';
 import FreesoundSearch from './components/FreesoundSearch';
+import AudioVisualization from './components/AudioVisualization';
 import TabNavigation, { TabId } from './components/TabNavigation';
 import { useSoundLibrary } from './hooks/useSoundLibrary';
 import './styles/App.css';
@@ -17,6 +18,7 @@ function App() {
   const [soundVolumes, setSoundVolumes] = useState<Map<string, number>>(new Map());
   const [isAudioInitialized, setIsAudioInitialized] = useState(false);
   const [activeTab, setActiveTab] = useState<TabId>(TabId.SoundLibrary);
+  const [visualizationVisible, setVisualizationVisible] = useState<boolean>(true);
 
   // Initialize audio context when the page is first interacted with
   useEffect(() => {
@@ -53,6 +55,15 @@ function App() {
     };
   }, [isAudioInitialized, soundLibrary]);
 
+  // Toggle visualization when there are no active sounds
+  useEffect(() => {
+    if (activeSounds.size === 0) {
+      setVisualizationVisible(false);
+    } else if (!visualizationVisible) {
+      setVisualizationVisible(true);
+    }
+  }, [activeSounds, visualizationVisible]);
+
   // Handle play sound
   const handlePlaySound = (id: string) => {
     const sound = soundLibrary.find(s => s.id === id);
@@ -76,6 +87,9 @@ function App() {
       newSounds.add(id);
       return newSounds;
     });
+
+    // Ensure visualization is visible
+    setVisualizationVisible(true);
   };
 
   // Handle stop sound
@@ -134,6 +148,11 @@ function App() {
     }
   };
 
+  // Toggle visualization visibility
+  const toggleVisualization = () => {
+    setVisualizationVisible(!visualizationVisible);
+  };
+
   return (
     <div className="app">
       <header className="app-header">
@@ -142,6 +161,32 @@ function App() {
       </header>
 
       <main className="app-main">
+        {visualizationVisible && activeSounds.size > 0 && (
+          <div className="visualization-container">
+            <AudioVisualization 
+              activeSounds={activeSounds}
+              soundVolumes={soundVolumes}
+            />
+            <button 
+              className="visualization-toggle"
+              onClick={toggleVisualization}
+              aria-label="Hide visualization"
+            >
+              <span className="visualization-icon">▼</span>
+            </button>
+          </div>
+        )}
+
+        {!visualizationVisible && activeSounds.size > 0 && (
+          <button 
+            className="visualization-toggle-button"
+            onClick={toggleVisualization}
+            aria-label="Show visualization"
+          >
+            Show Visualization <span className="visualization-icon">▲</span>
+          </button>
+        )}
+
         <TabNavigation 
           activeTab={activeTab}
           onTabChange={setActiveTab}

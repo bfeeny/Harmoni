@@ -23,9 +23,11 @@
   - [x] Create FreesoundService for API communication
   - [x] Create FreesoundSearch component for searching and adding sounds
   - [x] Implement useSoundLibrary hook for managing custom sounds
-- [ ] Add audio visualization
-  - [ ] Add a Canvas component for visualization
-  - [ ] Implement visualization effects based on active sounds
+- [x] Add audio visualization
+  - [x] Update AudioService to support analyzer nodes
+  - [x] Create AudioVisualization component with canvas
+  - [x] Implement dynamic visualization effects (circular wave, particle field)
+  - [x] Add toggle controls for visualization
 - [ ] Implement fade out for timer
 - [ ] Add sharing functionality for sound mixes
 
@@ -36,7 +38,8 @@
 ## Documentation
 - [x] Create ASSETS.md to document sound and icon sources
 - [ ] Update README with complete setup instructions
-  - [ ] Add Freesound API setup instructions
+  - [x] Add Freesound API setup instructions
+  - [ ] Add audio visualization details
 - [x] Add contributing guidelines
 
 ## Deployment

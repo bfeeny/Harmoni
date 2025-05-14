@@ -10,7 +10,7 @@ A modern web app that generates personalized ambient soundscapes for focus, rela
 - Mix multiple sound sources with individual volume controls
 - Save and share custom sound mixes
 - Timer functionality for sleep/meditation
-- Beautiful, minimalist visualization of the sounds
+- Beautiful, responsive audio visualization
 - Integration with Freesound API for endless sound possibilities
 - Optional focus timer/pomodoro integration
 
@@ -91,8 +91,22 @@ Harmoni uses the Web Audio API to load, process, and mix various ambient sounds.
 2. Search and import sounds from Freesound.org via the API
 3. Create personalized mixes with multiple sounds
 4. Adjust volume levels for each sound
-5. Set sleep timers for automatic fade-out
-6. Save and load custom mixes
+5. Enjoy visual representation of their soundscape
+6. Set sleep timers for automatic fade-out
+7. Save and load custom mixes
+
+### Audio Visualization
+
+Harmoni features real-time audio visualization that responds to the playing sounds:
+
+- **Single Sound Mode**: When only one sound is playing, the visualization shows a circular waveform that pulses with the audio.
+- **Multiple Sound Mode**: When multiple sounds are playing, the visualization displays a dynamic particle field where each sound contributes its own particles and connections.
+- **Interactive Controls**: Users can show or hide the visualization with a simple toggle.
+
+The visualization is built using:
+- Web Audio API's AnalyserNode to extract frequency data
+- HTML5 Canvas for rendering
+- Dynamic color schemes based on the number of active sounds
 
 ### Freesound Integration
 

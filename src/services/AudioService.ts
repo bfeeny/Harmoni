@@ -6,6 +6,8 @@ export class AudioService {
   private audioSources: Map<string, AudioBufferSourceNode> = new Map();
   private gainNodes: Map<string, GainNode> = new Map();
   private audioBuffers: Map<string, AudioBuffer> = new Map();
+  private masterGainNode: GainNode | null = null;
+  private analyzerNodes: Set<AnalyserNode> = new Set();
   
   /**
    * Initialize the audio context
@@ -13,7 +15,18 @@ export class AudioService {
   initialize(): void {
     if (this.audioContext === null) {
       this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      
+      // Create master gain node
+      this.masterGainNode = this.audioContext.createGain();
+      this.masterGainNode.connect(this.audioContext.destination);
     }
+  }
+  
+  /**
+   * Get the audio context
+   */
+  getAudioContext(): AudioContext | null {
+    return this.audioContext;
   }
   
   /**
@@ -44,7 +57,7 @@ export class AudioService {
    * @param loop - Whether to loop the sound
    */
   playSound(id: string, volume: number = 1.0, loop: boolean = true): void {
-    if (!this.audioContext) {
+    if (!this.audioContext || !this.masterGainNode) {
       this.initialize();
     }
     
@@ -68,7 +81,7 @@ export class AudioService {
     
     // Connect the nodes
     source.connect(gainNode);
-    gainNode.connect(this.audioContext!.destination);
+    gainNode.connect(this.masterGainNode!);
     
     // Store references
     this.audioSources.set(id, source);
@@ -117,14 +130,48 @@ export class AudioService {
   }
   
   /**
+   * Connect an analyzer node to the master gain node
+   * @param analyzerNode - The analyzer node to connect
+   */
+  connectAnalyzer(analyzerNode: AnalyserNode): void {
+    if (this.masterGainNode) {
+      this.masterGainNode.connect(analyzerNode);
+      this.analyzerNodes.add(analyzerNode);
+    }
+  }
+  
+  /**
+   * Disconnect an analyzer node
+   * @param analyzerNode - The analyzer node to disconnect
+   */
+  disconnectAnalyzer(analyzerNode: AnalyserNode): void {
+    if (this.masterGainNode && this.analyzerNodes.has(analyzerNode)) {
+      try {
+        this.masterGainNode.disconnect(analyzerNode);
+      } catch (e) {
+        // Ignore errors if already disconnected
+      }
+      this.analyzerNodes.delete(analyzerNode);
+    }
+  }
+  
+  /**
    * Clean up resources
    */
   dispose(): void {
     this.stopAll();
+    
+    // Disconnect all analyzer nodes
+    this.analyzerNodes.forEach(analyzer => {
+      this.disconnectAnalyzer(analyzer);
+    });
+    
     if (this.audioContext) {
       this.audioContext.close();
       this.audioContext = null;
     }
+    
+    this.masterGainNode = null;
     this.audioBuffers.clear();
   }
 }
