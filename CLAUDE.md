@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a modern web application built with React, TypeScript, and Vite.
+Harmoni is a modern web application built with React, TypeScript, and Vite that generates personalized ambient soundscapes for focus, relaxation, and sleep.
 
 ## Commands
 

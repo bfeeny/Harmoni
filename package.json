@@ -1,7 +1,7 @@
 {
-  "name": "project0",
+  "name": "harmoni",
   "version": "0.1.0",
-  "description": "A modern web application",
+  "description": "A modern web app that generates personalized ambient soundscapes",
   "private": true,
   "scripts": {
     "start": "vite",
