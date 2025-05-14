@@ -5,6 +5,7 @@ import { audioService } from './services/AudioService';
 import SoundGrid from './components/SoundGrid';
 import CategoryFilter from './components/CategoryFilter';
 import Timer from './components/Timer';
+import MixControls from './components/MixControls';
 import './styles/App.css';
 
 function App() {
@@ -126,12 +127,24 @@ function App() {
         <SoundGrid 
           sounds={soundLibrary}
           category={activeCategory}
+          activeSounds={activeSounds}
+          soundVolumes={soundVolumes}
+          onPlay={handlePlaySound}
+          onStop={handleStopSound}
+          onVolumeChange={handleVolumeChange}
         />
 
-        <Timer 
-          onTimerComplete={handleTimerComplete}
-          onTimerUpdate={handleTimerUpdate}
-        />
+        <div className="controls-section">
+          <MixControls 
+            activeSounds={activeSounds}
+            soundVolumes={soundVolumes}
+          />
+
+          <Timer 
+            onTimerComplete={handleTimerComplete}
+            onTimerUpdate={handleTimerUpdate}
+          />
+        </div>
       </main>
     </div>
   );

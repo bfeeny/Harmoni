@@ -5,68 +5,26 @@ import { Sound, SoundCategory } from '../utils/types';
 interface SoundGridProps {
   sounds: Sound[];
   category?: SoundCategory; // Optional category filter
+  activeSounds?: Set<string>; // Active sounds from App
+  soundVolumes?: Map<string, number>; // Sound volumes from App
+  onPlay?: (id: string) => void; // Callback when sound is played
+  onStop?: (id: string) => void; // Callback when sound is stopped
+  onVolumeChange?: (id: string, volume: number) => void; // Callback when volume changes
 }
 
-interface SoundState {
-  [key: string]: {
-    isPlaying: boolean;
-    volume: number;
-  };
-}
-
-export default function SoundGrid({ sounds, category }: SoundGridProps) {
+export default function SoundGrid({ 
+  sounds, 
+  category,
+  activeSounds = new Set(),
+  soundVolumes = new Map(),
+  onPlay = () => {},
+  onStop = () => {},
+  onVolumeChange = () => {}
+}: SoundGridProps) {
   // Filter sounds by category if provided
   const filteredSounds = category
     ? sounds.filter(sound => sound.category === category)
     : sounds;
-    
-  // Maintain state for all sounds
-  const [soundStates, setSoundStates] = useState<SoundState>({});
-  
-  // Initialize sound states
-  useEffect(() => {
-    const initialStates: SoundState = {};
-    filteredSounds.forEach(sound => {
-      initialStates[sound.id] = {
-        isPlaying: false,
-        volume: 0.5,
-      };
-    });
-    setSoundStates(initialStates);
-  }, [filteredSounds]);
-  
-  // Handle play button click
-  const handlePlay = (id: string) => {
-    setSoundStates(prev => ({
-      ...prev,
-      [id]: {
-        ...prev[id],
-        isPlaying: true,
-      },
-    }));
-  };
-  
-  // Handle stop button click
-  const handleStop = (id: string) => {
-    setSoundStates(prev => ({
-      ...prev,
-      [id]: {
-        ...prev[id],
-        isPlaying: false,
-      },
-    }));
-  };
-  
-  // Handle volume change
-  const handleVolumeChange = (id: string, volume: number) => {
-    setSoundStates(prev => ({
-      ...prev,
-      [id]: {
-        ...prev[id],
-        volume,
-      },
-    }));
-  };
   
   return (
     <div className="sound-grid">
@@ -74,11 +32,11 @@ export default function SoundGrid({ sounds, category }: SoundGridProps) {
         <SoundCard
           key={sound.id}
           sound={sound}
-          isPlaying={soundStates[sound.id]?.isPlaying || false}
-          volume={soundStates[sound.id]?.volume || 0.5}
-          onPlay={handlePlay}
-          onStop={handleStop}
-          onVolumeChange={handleVolumeChange}
+          isPlaying={activeSounds.has(sound.id)}
+          volume={soundVolumes.get(sound.id) || 0.5}
+          onPlay={onPlay}
+          onStop={onStop}
+          onVolumeChange={onVolumeChange}
         />
       ))}
     </div>

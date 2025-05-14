@@ -13,10 +13,11 @@
   - [ ] Document sources in ASSETS.md
 
 ## Features
-- [ ] Implement save/load functionality for custom sound mixes
-  - [ ] Create a Mix component
-  - [ ] Add local storage for mixes
-  - [ ] Add UI for naming and saving mixes
+- [x] Implement save/load functionality for custom sound mixes
+  - [x] Create MixService for managing mixes
+  - [x] Create custom hook (useMixes) for React components
+  - [x] Add local storage for mixes
+  - [x] Add UI for naming and saving mixes
 - [ ] Add audio visualization
   - [ ] Add a Canvas component for visualization
   - [ ] Implement visualization effects based on active sounds

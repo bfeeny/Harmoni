@@ -132,13 +132,170 @@
   text-align: right;
 }
 
+/* Controls section */
+.controls-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+}
+
+/* Mix controls */
+.mix-controls {
+  background-color: #1a1a1a;
+  border-radius: 10px;
+  padding: 1.5rem;
+  flex: 1;
+  min-width: 300px;
+  max-width: 500px;
+  margin-bottom: 2rem;
+}
+
+.mix-controls h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.mix-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.mix-form input {
+  padding: 0.8rem;
+  border-radius: 5px;
+  background-color: #333;
+  color: white;
+  border: 1px solid #444;
+  font-size: 1rem;
+}
+
+.mix-form button {
+  padding: 0.8rem;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.save-mix-btn {
+  background-color: #646cff;
+  border: 1px solid #8891ff;
+  color: white;
+}
+
+.save-mix-btn:disabled {
+  background-color: #444;
+  border-color: #555;
+  color: #aaa;
+  cursor: not-allowed;
+}
+
+.show-mixes-btn {
+  background-color: #333;
+  border: 1px solid #444;
+  color: white;
+}
+
+.mix-list {
+  background-color: #252525;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.mix-list h4 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #ddd;
+}
+
+.mix-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.mix-list li {
+  background-color: #333;
+  border-radius: 6px;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mix-list li:hover {
+  background-color: #3a3a3a;
+}
+
+.mix-list li.active {
+  background-color: #404675;
+  border-left: 4px solid #646cff;
+}
+
+.mix-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.3rem;
+}
+
+.mix-name {
+  font-weight: bold;
+  color: #fff;
+}
+
+.mix-date {
+  font-size: 0.8rem;
+  color: #aaa;
+}
+
+.mix-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.mix-actions button {
+  font-size: 0.8rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+}
+
+.edit-btn {
+  background-color: #646cff;
+  border: none;
+  color: white;
+}
+
+.delete-btn {
+  background-color: #ff4646;
+  border: none;
+  color: white;
+}
+
+.empty-message {
+  color: #888;
+  text-align: center;
+  padding: 1rem;
+}
+
 /* Timer component */
 .timer {
   background-color: #1a1a1a;
   border-radius: 10px;
   padding: 1.5rem;
-  margin: 0 auto;
-  max-width: 320px;
+  flex: 1;
+  min-width: 300px;
+  max-width: 500px;
+  margin-bottom: 2rem;
 }
 
 .timer h3 {
@@ -181,6 +338,16 @@
 @media (max-width: 768px) {
   .sound-grid {
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+  
+  .controls-section {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .mix-controls, .timer {
+    width: 100%;
+    max-width: none;
   }
 }
 
