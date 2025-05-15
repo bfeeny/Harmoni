@@ -2,7 +2,7 @@ import { SoundMix, SoundSetting } from '../utils/types';
 import { audioService } from './AudioService';
 
 /**
- * MixService - Manages saving, loading, and deleting sound mixes
+ * MixService - Manages saving, loading, sharing, and deleting sound mixes
  */
 export class MixService {
   private readonly STORAGE_KEY = 'harmoni_sound_mixes';
@@ -29,6 +29,16 @@ export class MixService {
       console.error('Error loading saved mixes:', error);
       return [];
     }
+  }
+  
+  /**
+   * Import a shared mix
+   * @param name Mix name
+   * @param sounds Sound settings
+   * @returns The imported mix
+   */
+  importMix(name: string, sounds: SoundSetting[]): SoundMix {
+    return this.saveMix(name, sounds);
   }
 
   /**

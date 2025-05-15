@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { SoundMix, SoundSetting } from '../utils/types';
 import useMixes from '../hooks/useMixes';
+import ShareMixButton from './ShareMixButton';
 
 interface MixControlsProps {
   activeSounds: Set<string>;
@@ -138,6 +139,10 @@ export default function MixControls({ activeSounds, soundVolumes }: MixControlsP
                     >
                       Edit
                     </button>
+                    
+                    <div onClick={(e) => e.stopPropagation()}>
+                      <ShareMixButton mix={mix} text="Share" className="share-btn" />
+                    </div>
                     
                     <button 
                       className="delete-btn"

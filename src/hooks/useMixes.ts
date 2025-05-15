@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { SoundMix, SoundSetting } from '../utils/types';
 import { mixService } from '../services/MixService';
+import { extractSharedMixFromUrl } from '../utils/shareUtils';
 
 /**
  * Custom hook for managing sound mixes
@@ -8,12 +9,37 @@ import { mixService } from '../services/MixService';
 export function useMixes() {
   const [mixes, setMixes] = useState<SoundMix[]>([]);
   const [activeMixId, setActiveMixId] = useState<string | null>(null);
+  const [hasCheckedUrl, setHasCheckedUrl] = useState(false);
   
   // Load mixes from storage on mount
   useEffect(() => {
     const savedMixes = mixService.getSavedMixes();
     setMixes(savedMixes);
   }, []);
+  
+  // Check for shared mix in URL
+  useEffect(() => {
+    if (hasCheckedUrl) return;
+    
+    const sharedMix = extractSharedMixFromUrl();
+    if (sharedMix) {
+      const importedMix = mixService.importMix(
+        `${sharedMix.name} (Shared)`, 
+        sharedMix.sounds
+      );
+      
+      setMixes(prevMixes => [...prevMixes, importedMix]);
+      setActiveMixId(importedMix.id);
+      mixService.applyMix(importedMix);
+      
+      // Remove the mix parameter from URL to prevent reimporting on refresh
+      const url = new URL(window.location.href);
+      url.searchParams.delete('mix');
+      window.history.replaceState({}, document.title, url.toString());
+    }
+    
+    setHasCheckedUrl(true);
+  }, [hasCheckedUrl]);
 
   /**
    * Create a new mix
@@ -72,6 +98,15 @@ export function useMixes() {
     return activeMixId ? mixes.find(mix => mix.id === activeMixId) : undefined;
   };
 
+  /**
+   * Import a shared mix directly
+   */
+  const importMix = (name: string, sounds: SoundSetting[]): SoundMix => {
+    const importedMix = mixService.importMix(name, sounds);
+    setMixes(prevMixes => [...prevMixes, importedMix]);
+    return importedMix;
+  };
+
   return {
     mixes,
     activeMixId,
@@ -79,7 +114,8 @@ export function useMixes() {
     updateMix,
     deleteMix,
     applyMix,
-    getActiveMix
+    getActiveMix,
+    importMix
   };
 }
 

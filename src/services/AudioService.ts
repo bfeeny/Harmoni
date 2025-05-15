@@ -8,6 +8,7 @@ export class AudioService {
   private audioBuffers: Map<string, AudioBuffer> = new Map();
   private masterGainNode: GainNode | null = null;
   private analyzerNodes: Set<AnalyserNode> = new Set();
+  private fadeOutTimeoutId: number | null = null;
   
   /**
    * Initialize the audio context
@@ -109,24 +110,129 @@ export class AudioService {
   }
   
   /**
+   * Fade out and stop a sound
+   * @param id - Sound identifier
+   * @param fadeOutDuration - Duration of the fade-out in milliseconds
+   */
+  fadeOutAndStopSound(id: string, fadeOutDuration: number): void {
+    const gainNode = this.gainNodes.get(id);
+    const source = this.audioSources.get(id);
+    
+    if (!gainNode || !source || !this.audioContext) {
+      return;
+    }
+    
+    const currentTime = this.audioContext.currentTime;
+    const currentVolume = gainNode.gain.value;
+    
+    // Schedule the fade-out
+    gainNode.gain.setValueAtTime(currentVolume, currentTime);
+    gainNode.gain.linearRampToValueAtTime(0, currentTime + fadeOutDuration / 1000);
+    
+    // Schedule stopping the sound after fade-out
+    setTimeout(() => {
+      this.stopSound(id);
+    }, fadeOutDuration);
+  }
+  
+  /**
+   * Fade out all sounds gradually and stop them
+   * @param fadeOutDuration - Duration of the fade-out in milliseconds
+   * @returns A Promise that resolves when all sounds have been stopped
+   */
+  fadeOutAll(fadeOutDuration: number): Promise<void> {
+    // Cancel any ongoing fade-out
+    if (this.fadeOutTimeoutId !== null) {
+      window.clearTimeout(this.fadeOutTimeoutId);
+      this.fadeOutTimeoutId = null;
+    }
+    
+    return new Promise<void>((resolve) => {
+      // If no sounds are playing, resolve immediately
+      if (!this.masterGainNode || this.audioSources.size === 0 || !this.audioContext) {
+        resolve();
+        return;
+      }
+      
+      const currentTime = this.audioContext.currentTime;
+      const currentMasterVolume = this.masterGainNode.gain.value;
+      
+      // Schedule the fade-out of the master gain node
+      this.masterGainNode.gain.setValueAtTime(currentMasterVolume, currentTime);
+      this.masterGainNode.gain.linearRampToValueAtTime(0, currentTime + fadeOutDuration / 1000);
+      
+      // Schedule stopping all sounds and resolving the promise
+      this.fadeOutTimeoutId = window.setTimeout(() => {
+        this.stopAll();
+        
+        // Reset the master gain for future playback
+        if (this.masterGainNode) {
+          this.masterGainNode.gain.setValueAtTime(1, this.audioContext!.currentTime);
+        }
+        
+        resolve();
+      }, fadeOutDuration);
+    });
+  }
+  
+  /**
    * Adjust the volume of a playing sound
    * @param id - Sound identifier
    * @param volume - New volume level (0.0 to 1.0)
+   * @param fadeTime - Optional time to fade to new volume in milliseconds
    */
-  setVolume(id: string, volume: number): void {
+  setVolume(id: string, volume: number, fadeTime: number = 0): void {
     const gainNode = this.gainNodes.get(id);
-    if (gainNode) {
-      gainNode.gain.value = Math.max(0, Math.min(1, volume));
+    const safeVolume = Math.max(0, Math.min(1, volume));
+    
+    if (gainNode && this.audioContext) {
+      if (fadeTime > 0) {
+        // Gradual volume change
+        const currentTime = this.audioContext.currentTime;
+        const currentVolume = gainNode.gain.value;
+        
+        gainNode.gain.setValueAtTime(currentVolume, currentTime);
+        gainNode.gain.linearRampToValueAtTime(
+          safeVolume, 
+          currentTime + fadeTime / 1000
+        );
+      } else {
+        // Immediate volume change
+        gainNode.gain.value = safeVolume;
+      }
     }
+  }
+  
+  /**
+   * Get the current volume of a playing sound
+   * @param id - Sound identifier
+   * @returns The current volume level (0.0 to 1.0) or undefined if sound not playing
+   */
+  getVolume(id: string): number | undefined {
+    const gainNode = this.gainNodes.get(id);
+    return gainNode?.gain.value;
   }
   
   /**
    * Stop all currently playing sounds
    */
   stopAll(): void {
+    // Cancel any ongoing fade-out
+    if (this.fadeOutTimeoutId !== null) {
+      window.clearTimeout(this.fadeOutTimeoutId);
+      this.fadeOutTimeoutId = null;
+    }
+    
     this.audioSources.forEach((source, id) => {
       this.stopSound(id);
     });
+  }
+  
+  /**
+   * Get the list of currently playing sound IDs
+   */
+  getActiveSounds(): string[] {
+    return Array.from(this.audioSources.keys());
   }
   
   /**

@@ -78,7 +78,8 @@ The app will be available at http://localhost:3000.
 - `npm run build` - Builds the app for production
 - `npm run preview` - Preview the production build locally
 - `npm test` - Run tests
-- `npm run test:watch` - Run tests in watch mode
+- `npm run test:watch` - Run tests in watch mode 
+- `npm test -- --coverage` - Run tests with coverage reporting
 - `npm run lint` - Lint the codebase
 - `npm run lint:fix` - Lint and fix issues automatically
 - `npm run format` - Format code with Prettier
@@ -121,6 +122,22 @@ To use the Freesound integration:
 5. Use the added sounds in your mixes
 
 Note: Freesound API functionality requires setting up API credentials as described in the Installation section.
+
+### Testing Framework
+
+Harmoni uses a robust testing framework to ensure code quality and reliability:
+
+- **Vitest**: A fast and lightweight test runner compatible with Vite and React
+- **React Testing Library**: Testing utilities for React components
+- **JSDOM**: DOM implementation for Node.js used in the tests
+
+The test suite covers:
+- Component rendering and interaction
+- Audio service functionality
+- State management
+- Integration between components
+
+For more details on testing, see the [Testing Documentation](TESTING.md).
 
 ## Contributing
 

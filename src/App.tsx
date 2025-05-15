@@ -19,6 +19,7 @@ function App() {
   const [isAudioInitialized, setIsAudioInitialized] = useState(false);
   const [activeTab, setActiveTab] = useState<TabId>(TabId.SoundLibrary);
   const [visualizationVisible, setVisualizationVisible] = useState<boolean>(true);
+  const [isFadingOut, setIsFadingOut] = useState<boolean>(false);
 
   // Initialize audio context when the page is first interacted with
   useEffect(() => {
@@ -57,12 +58,12 @@ function App() {
 
   // Toggle visualization when there are no active sounds
   useEffect(() => {
-    if (activeSounds.size === 0) {
+    if (activeSounds.size === 0 && !isFadingOut) {
       setVisualizationVisible(false);
-    } else if (!visualizationVisible) {
+    } else if (!visualizationVisible && activeSounds.size > 0) {
       setVisualizationVisible(true);
     }
-  }, [activeSounds, visualizationVisible]);
+  }, [activeSounds, visualizationVisible, isFadingOut]);
 
   // Handle play sound
   const handlePlaySound = (id: string) => {
@@ -117,16 +118,30 @@ function App() {
   };
 
   // Handle timer complete
-  const handleTimerComplete = () => {
-    // Stop all sounds when timer completes
-    audioService.stopAll();
-    setActiveSounds(new Set());
+  const handleTimerComplete = (fadeOutDuration: number) => {
+    // If fade-out is enabled (duration > 0)
+    if (fadeOutDuration > 0) {
+      setIsFadingOut(true);
+      
+      // Fade out all sounds gradually
+      audioService.fadeOutAll(fadeOutDuration).then(() => {
+        // Clear active sounds after fade-out is complete
+        setActiveSounds(new Set());
+        setIsFadingOut(false);
+      });
+    } else {
+      // No fade-out, stop sounds immediately
+      audioService.stopAll();
+      setActiveSounds(new Set());
+    }
   };
 
-  // Handle timer update (for potential fade-out implementation)
+  // Handle timer update
   const handleTimerUpdate = (timeRemaining: number) => {
-    // Could implement fade-out logic here
-    console.log(`Timer update: ${timeRemaining} seconds remaining`);
+    // If we're in the fade-out period, update the UI accordingly
+    if (timeRemaining <= 0) {
+      // Timer has ended, handled by handleTimerComplete
+    }
   };
 
   // Handle adding a new sound from Freesound
@@ -154,14 +169,15 @@ function App() {
   };
 
   return (
-    <div className="app">
+    <div className={`app ${isFadingOut ? 'fading-out' : ''}`}>
       <header className="app-header">
         <h1>Harmoni</h1>
         <p>Personalized ambient soundscapes for focus and relaxation</p>
+        {isFadingOut && <div className="fade-out-indicator">Fading out sounds...</div>}
       </header>
 
       <main className="app-main">
-        {visualizationVisible && activeSounds.size > 0 && (
+        {visualizationVisible && (activeSounds.size > 0 || isFadingOut) && (
           <div className="visualization-container">
             <AudioVisualization 
               activeSounds={activeSounds}

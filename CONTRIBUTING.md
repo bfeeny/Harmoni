@@ -70,4 +70,33 @@ This section guides you through submitting a feature suggestion.
 4. Run tests to ensure they pass.
 5. Submit a pull request.
 
+## Testing Guidelines
+
+Harmoni uses Vitest and React Testing Library for testing. Please follow these guidelines when writing tests:
+
+### Component Tests
+
+- Focus on testing behavior rather than implementation details
+- Use React Testing Library's queries (getBy, queryBy, findBy) to locate elements
+- Test user interactions with fireEvent or userEvent
+- Mock external dependencies (services, hooks) when necessary
+
+### Audio-Related Tests
+
+- Properly mock the Web Audio API when testing audio-related functionality
+- Use vi.useFakeTimers() when testing timeout or interval-based functionality
+- For complex async behavior, use await and waitFor appropriately
+
+### Test Structure
+
+- Arrange: Set up the component or function with the necessary props and mocks
+- Act: Perform the action being tested
+- Assert: Verify the expected outcome
+
+### Running Tests
+
+- Before submitting a PR, ensure all tests pass by running `npm test`
+- If you add new functionality, also add appropriate tests
+- See TESTING.md for more detailed information about the testing framework
+
 Thank you for contributing!
